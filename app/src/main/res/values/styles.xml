@@ -1,13 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
         <!-- Customize your theme here. -->
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
+        <item name="android:imageButtonStyle">@style/CustomImageButtonStyle</item>
     </style>
-    <style name="CustomButtonStyle" parent="@android:style/Widget.Button">
+    <style name="CustomButtonStyle" parent="android:Widget.Holo.Light.Button">
         <!-- Customize your theme here. -->
         <item name="android:background">@drawable/custom_btn</item>
     </style>
-
+    <style name="CustomImageButtonStyle" parent="android:Widget.Holo.Light.ImageButton">
+        <!-- Customize your theme here. -->
+        <item name="android:background">@drawable/custom_btn</item>
+    </style>
 </resources>
