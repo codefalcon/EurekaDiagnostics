@@ -33,7 +33,7 @@ public class MainActivity extends Activity
     }
 
     public void onClick(View v) {
-        if (v == findViewById(R.id.button2)) {
+        if (v == findViewById(R.id.button02)) {
             WebView w = (WebView) findViewById(R.id.webview);
             EditText e = (EditText) findViewById(R.id.edit);
             mmltoggle=false;
@@ -42,7 +42,7 @@ public class MainActivity extends Activity
                     +doubleEscapeTeX(e.getText().toString())+"\\\\]';");
             w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
         }
-        else if (v == findViewById(R.id.button3)) {
+        else if (v == findViewById(R.id.button03)) {
             WebView w = (WebView) findViewById(R.id.webview);
             EditText e = (EditText) findViewById(R.id.edit);
             mmltoggle=false;
@@ -50,7 +50,7 @@ public class MainActivity extends Activity
             w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
             w.loadUrl("javascript:document.getElementById('math').innerHTML='';");
         }
-        else if (v == findViewById(R.id.button4)) {
+        else if (v == findViewById(R.id.button04)) {
             WebView w = (WebView) findViewById(R.id.webview);
             EditText e = (EditText) findViewById(R.id.edit);
             mmltoggle=false;
@@ -63,7 +63,7 @@ public class MainActivity extends Activity
                     +"\\\\]';");
             w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
         }
-        else if (v == findViewById(R.id.button5)) {
+        else if (v == findViewById(R.id.button05)) {
             WebView w = (WebView) findViewById(R.id.webview);
             EditText e = (EditText) findViewById(R.id.edit);
             mmltoggle=!mmltoggle;
@@ -129,13 +129,13 @@ public class MainActivity extends Activity
         e.setBackgroundColor(Color.LTGRAY);
         e.setTextColor(Color.BLACK);
         e.setText("");
-        Button b = (Button) findViewById(R.id.button2);
+        Button b = (Button) findViewById(R.id.button02);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.button3);
+        b = (Button) findViewById(R.id.button03);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.button4);
+        b = (Button) findViewById(R.id.button04);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.button5);
+        b = (Button) findViewById(R.id.button05);
         b.setOnClickListener(this);
         TextView t = (TextView) findViewById(R.id.textview3);
         t.setMovementMethod(LinkMovementMethod.getInstance());

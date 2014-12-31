@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -15,9 +15,16 @@
         android:layout_height="50dp"
         android:textSize="30dp"
         android:background="#2196F3"/>
+    <WebView
+        android:id="@+id/webviewadd"
+        android:layout_below="@id/textview7"
+        android:layout_alignParentLeft="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
     <TextView android:id="@+id/textview6"
         android:text=""
-        android:layout_below="@id/textview7"
+        android:layout_below="@id/webviewadd"
         android:layout_alignParentLeft="true"
         android:textColor="#000"
         android:gravity="center"
@@ -25,64 +32,49 @@
         android:layout_height="50dp"
         android:textSize="30dp"
         android:background="#64B5F6"/>
-    <!--View android:id="@+id/strut"
-        android:layout_below="@id/textview6"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true"/>
-    <TextView android:text="LL2"
-        android:layout_below="@id/textview6"
-        android:layout_alignParentLeft="true"
-        android:layout_width="0dp"
-        android:layout_alignRight="@id/strut"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@android:color/holo_blue_light"/-->
-    <WebView
-        android:id="@+id/webviewadd"
-        android:layout_below="@id/textview6"
-        android:layout_alignParentLeft="true"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+
     <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridviewkeypad"
-        android:layout_below="@id/webviewadd"
-        android:layout_alignParentLeft="true"
+        android:layout_below="@id/textview6"
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:columnCount="3"
         android:orientation="horizontal">
 
-        <Button android:text="1" />
+        <Button
+            android:id="@+id/button1"
+            android:text="1" />
 
-        <Button android:text="2" />
+        <Button android:id="@+id/button2"
+            android:text="2" />
 
-        <Button android:text="3" />
+        <Button android:id="@+id/button3"
+            android:text="3" />
 
-        <Button android:text="4" />
+        <Button android:id="@+id/button4" android:text="4" />
 
-        <Button android:text="5" />
+        <Button android:id="@+id/button5" android:text="5" />
 
-        <Button android:text="6" />
+        <Button android:id="@+id/button6" android:text="6" />
 
-        <Button android:text="7" />
+        <Button android:id="@+id/button7" android:text="7" />
 
-        <Button android:text="8" />
+        <Button android:id="@+id/button8" android:text="8" />
 
-        <Button android:text="9" />
+        <Button android:id="@+id/button9" android:text="9" />
+
+        <Button android:id="@+id/button0" android:text="0" />
 
         <Button
-            android:id="@+id/button0"
-            android:text="0" />
-
-        <Button
+            android:id="@+id/buttonBkspc"
             android:layout_gravity="fill"
             android:layout_columnSpan="2"
             android:text="Backspace" />
 
         <Button
+            android:id="@+id/buttonSubmit"
             android:layout_columnSpan="3"
             android:layout_gravity="fill"
             android:text="Submit" />

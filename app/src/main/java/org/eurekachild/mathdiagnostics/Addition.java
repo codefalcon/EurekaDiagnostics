@@ -21,8 +21,73 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class Addition extends Activity {
+public class Addition extends Activity implements View.OnClickListener {
 
+    private String doubleEscapeTeX(String s) {
+        String t="";
+        for (int i=0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') t += '\\';
+            if (s.charAt(i) != '\n') t += s.charAt(i);
+            if (s.charAt(i) == '\\') t += "\\";
+        }
+        return t;
+    }
+
+    private boolean mmltoggle = false;
+
+    public void onClick(View v) {
+        TextView text = (TextView)findViewById(R.id.textview6);
+        switch (v.getId()) {
+            case R.id.button0:
+                text.setText(text.getText() + "0");
+                break;
+            case R.id.button1:
+                text.setText(text.getText() + "1");
+                break;
+            case R.id.button2:
+                text.setText(text.getText() + "2");
+                break;
+            case R.id.button3:
+                text.setText(text.getText() + "3");
+                break;
+            case R.id.button4:
+                text.setText(text.getText() + "4");
+                break;
+            case R.id.button5:
+                text.setText(text.getText() + "5");
+                break;
+            case R.id.button6:
+                text.setText(text.getText() + "6");
+                break;
+            case R.id.button7:
+                text.setText(text.getText() + "7");
+                break;
+            case R.id.button8:
+                text.setText(text.getText() + "8");
+                break;
+            case R.id.button9:
+                text.setText(text.getText() + "9");
+                break;
+            case R.id.buttonBkspc:
+                String answer = (String)text.getText();
+                if(!answer.isEmpty())
+                    text.setText(answer.substring(0,answer.length()-1));
+                break;
+            case R.id.buttonSubmit:
+                Toast.makeText(Addition.this,"Submit",Toast.LENGTH_SHORT).show();
+                //TextView textsub = (TextView)findViewById(R.id.textview6);
+                //text.setText(text.getText() + "0");
+                WebView w = (WebView) findViewById(R.id.webviewadd);
+                mmltoggle=false;
+                w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
+                w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
+                        +doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
+                w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
+                break;
+        }
+
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,27 +101,32 @@ public class Addition extends Activity {
         s.setAllowFileAccess(true);
 
         String html2 = assetTexttoStr("addition.html");
-        String html =
-                "<link href=\"file:///android_asset/diagnostic.css\" type=\"text/css\" rel=\"stylesheet\"/>"
-                +"<link href=\"file:///android_asset/jquery/jquery.mobile.custom.structure.css\" type=\"text/css\" rel=\"stylesheet\"/>"
-                +"<link href=\"file:///android_asset/jquery/jquery.mobile.custom.theme.css\" type=\"text/css\" rel=\"stylesheet\"/>"
-                +"<link href=\"file:///android_asset/bootstrap/css/bootstrap.css\" type=\"text/css\" rel=\"stylesheet\"/>"
-                +"<link href=\"file:///android_asset/bootstrap/css/bootstrap-theme.css\" type=\"text/css\" rel=\"stylesheet\"/>"
-                + "<script src=\"file:///android_asset/jquery/jquery.mobile.custom.js\"></script>"
-                + "<script src=\"file:///android_asset/bootstrap/js/bootstrap.js\"></script>"
-                + "<button>3</button>"
-                +"<container><block><button id=\"b3\" type=\"button\" class=\"btn btn-block btn-info\">5</button></block></container>";
         w.loadDataWithBaseURL("http://bar/",html2,"text/html","utf-8","");
 
         Button but = (Button) findViewById(R.id.button0);
-        but.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                Toast.makeText(Addition.this,"0",Toast.LENGTH_SHORT).show();
-                TextView text = (TextView)findViewById(R.id.textview6);
-                text.setText(text.getText() + "0");
-            }}
-            );
-
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button1);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button2);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button3);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button4);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button5);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button6);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button7);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button8);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.button9);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.buttonBkspc);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.buttonSubmit);
+        but.setOnClickListener(this);
 
                // Toast.makeText(Addition.this, "" + position, Toast.LENGTH_SHORT).show();
     }
