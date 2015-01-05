@@ -3,22 +3,22 @@ package org.eurekachild.mathdiagnostics;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.AdapterView;
+
 import android.widget.Button;
-import android.widget.GridView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 
 public class Addition extends Activity implements View.OnClickListener {
@@ -34,6 +34,68 @@ public class Addition extends Activity implements View.OnClickListener {
     }
 
     private boolean mmltoggle = false;
+
+    Random r = new Random();
+
+    private int currentType = 1;
+    private int currentLevel =1 ;
+
+    private String getQuestionForType(int qnType) {
+        String question = "";
+        int op1 = 0;
+        int op2 = 0;
+        String operand = "+";
+
+        switch (qnType) {
+            case 1:
+                //1D + 1D
+                op1 = getRandomNumberinRange(1,99);
+                op2 = getRandomNumberinRange(1,9);
+                break;
+            case 2:
+                //2D + 2D w/o carry
+                op1 = getRandomNumberinRange(1,8);
+                op2 =  getRandomNumberSum1D(op1);
+                int digits = getRandomNumberinRange(1,8);
+                op1 = op1*10+digits;
+                op2 = op2*10 + getRandomNumberSum1D(digits);
+                break;
+            default:
+                op1=0;
+                op2=0;
+                break;
+        }
+        question = generateTexForProblem(op1,op2, operand);
+        return question;
+    }
+
+    private String generateTexForProblem(int op1, int op2, String operand) {
+
+        String qn = "\\begin{array}{rr}" +
+                "~&"+ Integer.toString(op1) +"\\\\" +
+                operand + "& " + Integer.toString(op2) +
+                "\\end{array}";
+        return qn;
+    }
+
+    //Generate a random number in the range min to max both inclusive
+    private int getRandomNumberinRange(int min, int max) {
+        if(min < 0 || max < 0) return 0;
+        return (r.nextInt(max-min+1) + min);
+    }
+
+    //Given a 1D +ve integer, generate a 1D random number such that the sum is also 1D
+    private int getRandomNumberSum1D(int given) {
+        if(given > 8 || given < 0) return 0;
+        return (r.nextInt(9-given) + 1);
+    }
+
+    //Given a 1D +ve integer, generate a 1D random number such that the sum is 2D always
+    private int getRandomNumberSum2D(int given) {
+        if(given > 9 || given < 0) return 0;
+        int min = 10-given;
+        return getRandomNumberinRange(min,9);
+    }
 
     public void onClick(View v) {
         TextView text = (TextView)findViewById(R.id.textview6);
@@ -81,8 +143,10 @@ public class Addition extends Activity implements View.OnClickListener {
                 mmltoggle=false;
                 w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
                 w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
-                        +doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
+                        //+doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
+                        +doubleEscapeTeX(getQuestionForType(2))+"\\\\]';");
                 w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
+                if(currentType > 7) currentType =1;
                 break;
         }
 
