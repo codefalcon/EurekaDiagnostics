@@ -44,21 +44,58 @@ public class Addition extends Activity implements View.OnClickListener {
         String question = "";
         int op1 = 0;
         int op2 = 0;
+        int digit =0;
         String operand = "+";
 
         switch (qnType) {
             case 1:
                 //1D + 1D
-                op1 = getRandomNumberinRange(1,99);
+                op1 = getRandomNumberinRange(1,9);
                 op2 = getRandomNumberinRange(1,9);
                 break;
             case 2:
                 //2D + 2D w/o carry
                 op1 = getRandomNumberinRange(1,8);
                 op2 =  getRandomNumberSum1D(op1);
-                int digits = getRandomNumberinRange(1,8);
-                op1 = op1*10+digits;
-                op2 = op2*10 + getRandomNumberSum1D(digits);
+                digit = getRandomNumberinRange(1,8);
+                op1 = op1*10+digit;
+                op2 = op2*10 + getRandomNumberSum1D(digit);
+                break;
+            case 3:
+                //2D + 1D with or w/o carry
+                op1 = getRandomNumberinRange(1,9);
+                op1 = op1*10 + getRandomNumberinRange(1,9);
+                op2 = getRandomNumberinRange(1,9);
+                break;
+            case 4:
+                //2D + 2D with zero ending
+                op1 = getRandomNumberinRange(1,8);
+                op2 = getRandomNumberSum1D(op1);
+                op1 = op1*10 + getRandomNumberinRange(1,9);
+                op2 = op2*10;
+                break;
+            case 5:
+                //2D + 2D with carry
+                op1 = getRandomNumberinRange(1,9);
+                op2 =  getRandomNumberSum2D(op1);
+                digit = getRandomNumberinRange(1,8);
+                op1 = digit*10 + op1;
+                op2 = getRandomNumberSum1D(digit)*10 + op2;
+                break;
+            case 6:
+                //random 2D. Anything from 2-5
+                digit = getRandomNumberinRange(2,5);
+                return getQuestionForType(digit);
+            case 7:
+                //3D + 3D with 2 carry overs
+                op1 = getRandomNumberinRange(1,9);
+                op2 =  getRandomNumberSum2D(op1);
+                digit = getRandomNumberinRange(1,9);
+                op1 = digit*10 + op1;
+                op2 = getRandomNumberSum2D(digit)*10 + op2;
+                digit = getRandomNumberinRange(1,8);
+                op1 = digit*100 + op1;
+                op2 = getRandomNumberSum1D(digit)*100 + op2;
                 break;
             default:
                 op1=0;
@@ -71,10 +108,10 @@ public class Addition extends Activity implements View.OnClickListener {
 
     private String generateTexForProblem(int op1, int op2, String operand) {
 
-        String qn = "\\begin{array}{rr}" +
-                "~&"+ Integer.toString(op1) +"\\\\" +
+        String qn = "\\begin{array}{rrr}" +
+                "~&"+ Integer.toString(op1) +"&~\\\\" +
                 operand + "& " + Integer.toString(op2) +
-                "\\end{array}";
+                "&~\\end{array}";
         return qn;
     }
 
@@ -144,7 +181,7 @@ public class Addition extends Activity implements View.OnClickListener {
                 w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
                 w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
                         //+doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
-                        +doubleEscapeTeX(getQuestionForType(2))+"\\\\]';");
+                        +doubleEscapeTeX(getQuestionForType(6))+"\\\\]';");
                 w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
                 if(currentType > 7) currentType =1;
                 break;
