@@ -1,6 +1,7 @@
 package org.eurekachild.mathdiagnostics;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 
@@ -33,6 +34,77 @@ public class Addition extends Activity implements View.OnClickListener {
         return t;
     }
 
+    class QuestionAnswer {
+        int op1;
+        int op2;
+        int operand;
+        int correctAnswer;
+        int studentResponse;
+
+        public QuestionAnswer() {
+            op1=0;
+            op2=0;
+            operand=ADDITION;
+            correctAnswer = 0;
+            studentResponse = 0;
+        }
+
+        public QuestionAnswer(int op1, int op2, int operand) {
+            this.op1 = op1;
+            this.op2 = op2;
+            this.operand = operand;
+            this.correctAnswer = getAnswer(op1,op2,operand);
+            this.studentResponse = 0;
+        }
+
+        public int getStudentResponse() {
+            return studentResponse;
+        }
+
+        public void setStudentResponse(int response) {
+            studentResponse = response;
+        }
+
+        public int getCorrectAnswer() {
+            return correctAnswer;
+        }
+
+        public int getOp1() {
+            return op1;
+        }
+
+        public int getOp2() {
+            return op2;
+        }
+
+        public int getOperand() {
+            return operand;
+        }
+
+        private int  getAnswer(int op1, int op2, int operand) {
+            int corAns = 0;
+
+            switch (operand) {
+                case ADDITION:
+                    corAns = op1 + op2;
+                    break;
+                case SUBRTRACTION:
+                    corAns = op1 - op2;
+                    break;
+                case MULTIPLICATION:
+                    corAns = op1 * op2;
+                    break;
+                case DIVISION:
+                    corAns = op1 / op2;
+                    break;
+            }
+            return corAns;
+        }
+
+    }
+
+    QuestionAnswer qnArray[] = new QuestionAnswer[7];
+
     private boolean mmltoggle = false;
 
     Random r = new Random();
@@ -40,14 +112,17 @@ public class Addition extends Activity implements View.OnClickListener {
     private int currentType = 1;
     private int currentLevel =1 ;
 
-    private String getQuestionForType(int qnType) {
-        String question = "";
+    private final int ADDITION = 101;
+    private final int SUBRTRACTION = 102;
+    private final int MULTIPLICATION = 103;
+    private final int DIVISION = 104;
+
+    private QuestionAnswer getQuestionForType(int qnType, int operand) {
         int op1 = 0;
         int op2 = 0;
         int digit =0;
-        String operand = "+";
 
-        switch (qnType) {
+        switch (qnType+1) {
             case 1:
                 //1D + 1D
                 op1 = getRandomNumberinRange(1,9);
@@ -85,7 +160,7 @@ public class Addition extends Activity implements View.OnClickListener {
             case 6:
                 //random 2D. Anything from 2-5
                 digit = getRandomNumberinRange(2,5);
-                return getQuestionForType(digit);
+                return getQuestionForType(digit, operand);
             case 7:
                 //3D + 3D with 2 carry overs
                 op1 = getRandomNumberinRange(1,9);
@@ -102,17 +177,35 @@ public class Addition extends Activity implements View.OnClickListener {
                 op2=0;
                 break;
         }
-        question = generateTexForProblem(op1,op2, operand);
-        return question;
+        return(new QuestionAnswer(op1,op2,operand));
+    }
+    private String getUpdateQuestionForType(int qnType, int operand) {
+        updateQnArray(qnType, getQuestionForType(qnType,operand));
+        return generateTexForProblem(qnArray[qnType]);
     }
 
-    private String generateTexForProblem(int op1, int op2, String operand) {
+    private void updateQnArray(int qnType, QuestionAnswer qnAns) {
 
-        String qn = "\\begin{array}{rrr}" +
-                "~&"+ Integer.toString(op1) +"&~\\\\" +
-                operand + "& " + Integer.toString(op2) +
-                "&~\\end{array}";
+        if(qnType > 6||qnType < 0) return;
+        qnArray[qnType] = new QuestionAnswer(qnAns.op1, qnAns.op2, qnAns.operand);
+    }
+
+    private String generateTexForProblem(QuestionAnswer qnAns) {
+        String qn = "";
+        int op1 =  qnAns.op1;
+        int op2 = qnAns.op2;
+        int operand = qnAns.operand;
+
+        switch (operand) {
+            case ADDITION:
+            qn = "\\begin{array}{rrr}" +
+                    "~&" + Integer.toString(op1) + "&~\\\\" +
+                    "+" + "& " + Integer.toString(op2) +
+                    "&~\\end{array}";
+                break;
+        }
         return qn;
+
     }
 
     //Generate a random number in the range min to max both inclusive
@@ -173,7 +266,19 @@ public class Addition extends Activity implements View.OnClickListener {
                     text.setText(answer.substring(0,answer.length()-1));
                 break;
             case R.id.buttonSubmit:
-                Toast.makeText(Addition.this,"Submit",Toast.LENGTH_SHORT).show();
+
+                if(currentType>0 && currentType < 8) {
+                    int studentAnswer = Integer.parseInt(text.getText().toString());
+                    qnArray[currentType-1].setStudentResponse(studentAnswer);
+                    int corAns = qnArray[currentType-1].getCorrectAnswer();
+                    if(corAns == studentAnswer)
+                        Toast.makeText(Addition.this,"Correct",Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(Addition.this,"Wrong",Toast.LENGTH_SHORT).show();
+                }
+                if(currentType > 6)
+                    currentType =0;
+                text.setText("");
                 //TextView textsub = (TextView)findViewById(R.id.textview6);
                 //text.setText(text.getText() + "0");
                 WebView w = (WebView) findViewById(R.id.webviewadd);
@@ -181,9 +286,9 @@ public class Addition extends Activity implements View.OnClickListener {
                 w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
                 w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
                         //+doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
-                        +doubleEscapeTeX(getQuestionForType(6))+"\\\\]';");
+                        +doubleEscapeTeX(getUpdateQuestionForType(currentType++, ADDITION))+"\\\\]';");
                 w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
-                if(currentType > 7) currentType =1;
+
                 break;
         }
 
@@ -203,6 +308,9 @@ public class Addition extends Activity implements View.OnClickListener {
 
         String html2 = assetTexttoStr("addition.html");
         w.loadDataWithBaseURL("http://bar/",html2,"text/html","utf-8","");
+
+        currentType = 0;
+        currentLevel = 0;
 
         Button but = (Button) findViewById(R.id.button0);
         but.setOnClickListener(this);
@@ -259,5 +367,6 @@ public class Addition extends Activity implements View.OnClickListener {
     public void onConfigurationChanged(Configuration newConfig) {
         //don't reload the current page when the orientation is changed
         super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 }
