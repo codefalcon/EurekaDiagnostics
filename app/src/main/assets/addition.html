@@ -22,6 +22,23 @@
                 //+"'SVG' : { blacker: 30,
                 // +"styles: { path: { 'shape-rendering': 'crispEdges' } } }
                 });
+                //MathJax.Hub.Register.StartupHook("onLoad",function () {
+                   //var m1 = document.getElementById("math");
+                    //MathJax.HTML.addText(math,"onLoad");
+                //});
+                //MathJax.Hub.Register.StartupHook("End",function () {
+                  // var m1 = document.getElementById("math");
+                    //MathJax.HTML.addText(math,"End");
+                //});
+                MathJax.Hub.Register.StartupHook("MathZoom Ready",function () {
+                   //var m1 = document.getElementById("math");
+                    //MathJax.HTML.addText(math,"MathZoom");
+                    injectedObject.showEquation();
+                });
+                //MathJax.Hub.Queue(function () {
+                //    var m1 = document.getElementById("math");
+                //    MathJax.HTML.addText(math,"Done");
+                //});
                 </script>
     <script type='text/javascript' src='file:///android_asset/MathJax/MathJax.js'></script>
     <script type='text/javascript'>getLiteralMML = function() {
@@ -35,6 +52,7 @@
                 mml=math.root.toMathMLquote(getLiteralMML()); return mml;
                 };
                 </script>
-    <span id='math' style="font-size:200%">math</span><pre><span id='mmlout'>mml</span></pre>
+
+    <span id='math' style="font-size:200%"></span><pre><span id='mmlout'>Loading...</span></pre>
 </body>
 </html>

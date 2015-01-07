@@ -16,6 +16,7 @@ import android.webkit.WebView;
 
 import android.widget.Button;
 
+import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,13 +106,12 @@ public class Addition extends Activity implements View.OnClickListener {
 
     }
 
-    QuestionAnswer qnArray[] = new QuestionAnswer[7];
+    private final int MAX_TYPE = 7;
+    QuestionAnswer qnArray[] = new QuestionAnswer[MAX_TYPE];
 
     private SoundPool soundPool;
     private int soundID[] = {0,1,2,3,4};
     boolean soundLoaded[] = new boolean[5];
-
-    private boolean mmltoggle = false;
 
     Random r = new Random();
 
@@ -283,13 +283,22 @@ public class Addition extends Activity implements View.OnClickListener {
 
 
                 if(currentType>0 && currentType < 8) {
-                    int studentAnswer = Integer.parseInt(text.getText().toString());
+                    String str = text.getText().toString();
+                    int studentAnswer = -1;
+                    if(!str.isEmpty())
+                        studentAnswer = Integer.parseInt(str);
+
                     qnArray[currentType-1].setStudentResponse(studentAnswer);
                     int corAns = qnArray[currentType-1].getCorrectAnswer();
                     if(corAns == studentAnswer) {
                         Toast.makeText(Addition.this, "Correct", Toast.LENGTH_SHORT).show();
-                        if (soundLoaded[1])
+
+                        if (currentType < 3 && soundLoaded[1])
                             soundPool.play(soundID[1], volume, volume, 1, 0, 1);
+                        else if (currentType < 5 && soundLoaded[2])
+                            soundPool.play(soundID[2], volume, volume, 1, 0, 1);
+                        else if (currentType < 7 && soundLoaded[3])
+                            soundPool.play(soundID[3], volume, volume, 1, 0, 1);
                     }
                     else {
                         Toast.makeText(Addition.this, "Wrong", Toast.LENGTH_SHORT).show();
@@ -298,27 +307,77 @@ public class Addition extends Activity implements View.OnClickListener {
 
                     }
                 }
+                text.setText("");
                 if(currentType > 6) {
                     currentType = 0;
+                    GridLayout myGrid = (GridLayout)findViewById(R.id.gridviewkeypad);
+                    myGrid.setVisibility(View.GONE);
+                    TextView title = (TextView) findViewById(R.id.textview7);
+                    title.setText("Addition-Summary");
+
+                    showMathMLEquation(getSummaryMathStr(qnArray));
+
                     if (soundLoaded[4])
                         soundPool.play(soundID[4], volume, volume, 1, 0, 1);
-                }
-                text.setText("");
-                //TextView textsub = (TextView)findViewById(R.id.textview6);
-                //text.setText(text.getText() + "0");
-                WebView w = (WebView) findViewById(R.id.webviewadd);
-                mmltoggle=false;
-                w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
-                w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
-                        //+doubleEscapeTeX("\\  7\\\\+6")+"\\\\]';");
-                        +doubleEscapeTeX(getUpdateQuestionForType(currentType++, ADDITION))+"\\\\]';");
-                w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
 
+                }
+                else {
+                    //TextView textsub = (TextView)findViewById(R.id.textview6);
+                    //text.setText(text.getText() + "0");
+                    showMathMLEquation(currentType++, ADDITION);
+                }
                 break;
         }
-
     }
-    
+
+    private String getSummaryMathStr(QuestionAnswer qnArray[]) {
+
+        StringBuilder mathStr = new StringBuilder();
+        mathStr.append("\\begin{array}{rrrcc|c}");
+        mathStr.append("~&~&~&~&Student&Correct\\\\");
+        mathStr.append("~&~&~&~&Response&Answer\\\\");
+
+        for(int i = 0; i < MAX_TYPE; i++) {
+            QuestionAnswer qnAns = qnArray[i];
+            mathStr.append(
+                    Integer.toString(qnAns.getOp1()) + "&" +
+                    getOperandStr(qnAns.getOperand()) + "&" +
+                    Integer.toString(qnAns.getOp2()) + "&=&\\style{color:" +
+                    (qnAns.getStudentResponse() == qnAns.getCorrectAnswer()?"green":"red")+
+                    "}{" +
+                    Integer.toString(qnAns.getStudentResponse()) + "}&" +
+                    Integer.toString(qnAns.getCorrectAnswer()) + "\\\\");
+        }
+        mathStr.append("\\end{array}");
+        return mathStr.toString();
+    }
+    private String getOperandStr(int operand) {
+        if(operand == ADDITION)
+            return "+";
+        else if(operand == SUBRTRACTION)
+            return "-";
+        else if(operand == MULTIPLICATION)
+            return "X";
+        else if(operand == DIVISION)
+            return "÷";
+        return "";
+    }
+    private void showMathMLEquation (int typeToShow, int operand) {
+        WebView w = (WebView) findViewById(R.id.webviewadd);
+        w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
+        w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
+                //+doubleEscapeTeX("\\  7\\\\+6\\\\3+4\\\\5+6\\\\7+8\\\\1+2\\\\10+11\\\\a+b1")+"\\\\]';");
+                +doubleEscapeTeX(getUpdateQuestionForType(typeToShow, operand))+"\\\\]';");
+        w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
+    }
+    private void showMathMLEquation (String mathStr) {
+        WebView w = (WebView) findViewById(R.id.webviewadd);
+        w.loadUrl("javascript:document.getElementById('mmlout').innerHTML='';");
+        w.loadUrl("javascript:document.getElementById('math').innerHTML='\\\\["
+                +doubleEscapeTeX(mathStr)+"\\\\]';");
+        w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -332,6 +391,13 @@ public class Addition extends Activity implements View.OnClickListener {
         s.setAllowFileAccess(true);
 
         String html2 = assetTexttoStr("addition.html");
+        w.addJavascriptInterface(new Object() {
+            //@JavascriptInterface
+            public void showEquation() {
+                showMathMLEquation(currentType++,ADDITION);
+            //WebView ww = (WebView) findViewById(R.id.webviewadd);
+            //Toast.makeText(Addition.this,"MathML Ready",Toast.LENGTH_SHORT).show();
+        }}, "injectedObject");
         w.loadDataWithBaseURL("http://bar/",html2,"text/html","utf-8","");
 
         currentType = 0;
