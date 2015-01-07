@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 import android.view.View;
@@ -104,6 +106,10 @@ public class Addition extends Activity implements View.OnClickListener {
     }
 
     QuestionAnswer qnArray[] = new QuestionAnswer[7];
+
+    private SoundPool soundPool;
+    private int soundID[] = {0,1,2,3,4};
+    boolean soundLoaded[] = new boolean[5];
 
     private boolean mmltoggle = false;
 
@@ -267,17 +273,36 @@ public class Addition extends Activity implements View.OnClickListener {
                 break;
             case R.id.buttonSubmit:
 
+                // Getting the user sound settings
+                AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                float actualVolume = (float) audioManager
+                        .getStreamVolume(AudioManager.STREAM_MUSIC);
+                float maxVolume = (float) audioManager
+                        .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                float volume = actualVolume / maxVolume;
+
+
                 if(currentType>0 && currentType < 8) {
                     int studentAnswer = Integer.parseInt(text.getText().toString());
                     qnArray[currentType-1].setStudentResponse(studentAnswer);
                     int corAns = qnArray[currentType-1].getCorrectAnswer();
-                    if(corAns == studentAnswer)
-                        Toast.makeText(Addition.this,"Correct",Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(Addition.this,"Wrong",Toast.LENGTH_SHORT).show();
+                    if(corAns == studentAnswer) {
+                        Toast.makeText(Addition.this, "Correct", Toast.LENGTH_SHORT).show();
+                        if (soundLoaded[1])
+                            soundPool.play(soundID[1], volume, volume, 1, 0, 1);
+                    }
+                    else {
+                        Toast.makeText(Addition.this, "Wrong", Toast.LENGTH_SHORT).show();
+                        if (soundLoaded[0])
+                            soundPool.play(soundID[0], volume, volume, 1, 0, 1);
+
+                    }
                 }
-                if(currentType > 6)
-                    currentType =0;
+                if(currentType > 6) {
+                    currentType = 0;
+                    if (soundLoaded[4])
+                        soundPool.play(soundID[4], volume, volume, 1, 0, 1);
+                }
                 text.setText("");
                 //TextView textsub = (TextView)findViewById(R.id.textview6);
                 //text.setText(text.getText() + "0");
@@ -337,6 +362,27 @@ public class Addition extends Activity implements View.OnClickListener {
         but = (Button) findViewById(R.id.buttonSubmit);
         but.setOnClickListener(this);
 
+        soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                       int status) {
+                if(status==0) {
+                    for(int i = 0;i<5;i++) {
+                        if(sampleId == soundID[i]) {
+                            soundLoaded[i] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        soundID[0] = soundPool.load(this, R.raw.ting1sec, 1);
+        soundID[1] = soundPool.load(this, R.raw.clap2sec, 1);
+        soundID[2] = soundPool.load(this, R.raw.clapcheer2sec, 1);
+        soundID[3] = soundPool.load(this, R.raw.claphighcheer2sec, 1);
+        soundID[4] = soundPool.load(this, R.raw.fireworks3sec, 1);
+
                // Toast.makeText(Addition.this, "" + position, Toast.LENGTH_SHORT).show();
     }
 
@@ -366,7 +412,7 @@ public class Addition extends Activity implements View.OnClickListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         //don't reload the current page when the orientation is changed
-        super.onConfigurationChanged(newConfig);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
     }
 }

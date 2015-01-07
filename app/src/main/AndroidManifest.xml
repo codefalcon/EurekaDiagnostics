@@ -19,8 +19,8 @@
         <activity
             android:name=".Addition"
             android:label="@string/title_activity_addition"
-            android:gravity="center">
-
+            android:gravity="center"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.eurekachild.mathdiagnostics.MainActivity" />
