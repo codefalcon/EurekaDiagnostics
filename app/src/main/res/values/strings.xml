@@ -19,7 +19,7 @@
     </string-array>
 
     <string name="links">Links: &lt;a href=\"http://www.mathjax.org\">MathJax.org&lt;/a> || &lt;a href=\"http://www.mathjax.org/docs/2.0/tex.html\">TeX support&lt;/a> || &lt;a href=\"http://www.onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm\">commands with examples&lt;/a></string>
-    <string name="title_activity_addition">Diagnostics Test : Addition</string>
+    <string name="title_activity_addition">Eureka Diagnostics Test</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
