@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -312,6 +313,13 @@ public class Addition extends Activity implements View.OnClickListener {
                     currentType = 0;
                     GridLayout myGrid = (GridLayout)findViewById(R.id.gridviewkeypad);
                     myGrid.setVisibility(View.GONE);
+
+                    LinearLayout myLayout = (LinearLayout) findViewById(R.id.linearlayout1);
+                    myLayout.setVisibility(View.GONE);
+
+                    LinearLayout layoutFinal = (LinearLayout) findViewById(R.id.linearlayoutFinal);
+                    layoutFinal.setVisibility(View.VISIBLE);
+
                     TextView title = (TextView) findViewById(R.id.textview7);
                     title.setText("Addition-Summary");
 
@@ -326,6 +334,33 @@ public class Addition extends Activity implements View.OnClickListener {
                     //text.setText(text.getText() + "0");
                     showMathMLEquation(currentType++, ADDITION);
                 }
+                break;
+            case R.id.buttonTakeTest:
+                currentType = 0;
+                currentLevel = 0;
+                for (int i = 0; i< MAX_TYPE;i++)
+                    qnArray[i] = null;
+                LinearLayout myLayout = (LinearLayout) findViewById(R.id.linearlayout1);
+                myLayout.setVisibility(View.VISIBLE);
+
+                LinearLayout layoutFinal = (LinearLayout) findViewById(R.id.linearlayoutFinal);
+                layoutFinal.setVisibility(View.INVISIBLE);
+
+                TextView title = (TextView) findViewById(R.id.textview7);
+                title.setText("Addition");
+
+                showWebView();
+
+                GridLayout myGrid = (GridLayout)findViewById(R.id.gridviewkeypad);
+                myGrid.setVisibility(View.VISIBLE);
+
+                //WebView wv = (WebView) findViewById(R.id.webviewadd);
+                //wv.reload();
+
+                //showMathMLEquation(currentType++, ADDITION);
+                break;
+            case R.id.buttonExit:
+                    finish();
                 break;
         }
     }
@@ -378,10 +413,7 @@ public class Addition extends Activity implements View.OnClickListener {
         w.loadUrl("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);");
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addition);
+    private void showWebView () {
         WebView w = (WebView) findViewById(R.id.webviewadd);
         w.setWebChromeClient(new WebChromeClient());
 
@@ -395,10 +427,18 @@ public class Addition extends Activity implements View.OnClickListener {
             //@JavascriptInterface
             public void showEquation() {
                 showMathMLEquation(currentType++,ADDITION);
-            //WebView ww = (WebView) findViewById(R.id.webviewadd);
-            //Toast.makeText(Addition.this,"MathML Ready",Toast.LENGTH_SHORT).show();
-        }}, "injectedObject");
+                //WebView ww = (WebView) findViewById(R.id.webviewadd);
+                //Toast.makeText(Addition.this,"MathML Ready",Toast.LENGTH_SHORT).show();
+            }}, "injectedObject");
         w.loadDataWithBaseURL("http://bar/",html2,"text/html","utf-8","");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_addition);
+
+        showWebView();
 
         currentType = 0;
         currentLevel = 0;
@@ -426,6 +466,10 @@ public class Addition extends Activity implements View.OnClickListener {
         but = (Button) findViewById(R.id.buttonBkspc);
         but.setOnClickListener(this);
         but = (Button) findViewById(R.id.buttonSubmit);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.buttonTakeTest);
+        but.setOnClickListener(this);
+        but = (Button) findViewById(R.id.buttonExit);
         but.setOnClickListener(this);
 
         soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
